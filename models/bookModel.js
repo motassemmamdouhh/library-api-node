@@ -8,10 +8,20 @@ bookSchema = new mongoose.Schema({
   rating: {
     type: Number,
     required: [true, "book must have rating"],
+    min: [1, "rating cant be less than 1"],
+    max: [5, "rating cant be greater that 5"],
   },
   category: {
     type: String,
     required: [true, "book must have rating"],
+    enum: {
+      values: ["politics", "how to", "drama", "biography", "comic"],
+      message: " category must be correct",
+    },
+  },
+  price: {
+    type: Number,
+    required: [true, "books must have a price"],
   },
 });
 

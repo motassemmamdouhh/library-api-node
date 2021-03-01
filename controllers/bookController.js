@@ -1,10 +1,20 @@
 const { fail } = require("assert");
+const { features } = require("process");
 const Book = require("../models/bookModel");
+const ApiFeatures = require("../apiFeatures");
 
+exports.top_five = (req, res, next) => {
+  (req.query.limit = "5"), (req.query.sort = "-rating");
+  next();
+};
 exports.get_books = async (req, res) => {
   try {
-    const query = Book.find();
-    const books = await query;
+    const features = new ApiFeatures(Book.find(), req.query)
+      .filter()
+      .sort()
+      .paginate();
+    const books = await features.queryObj;
+    console.log(books);
     res.status(200).json({
       status: "success",
       results: books.length,
