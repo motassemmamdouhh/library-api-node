@@ -10,6 +10,7 @@ exports.top_five = (req, res, next) => {
 exports.get_books = async (req, res) => {
   try {
     const features = new ApiFeatures(Book.find(), req.query)
+      .limitFeilds()
       .filter()
       .sort()
       .paginate();
