@@ -2,6 +2,7 @@ const { fail } = require("assert");
 const { features } = require("process");
 const Book = require("../models/bookModel");
 const ApiFeatures = require("../apiFeatures");
+const { abort } = require("../abort");
 
 exports.top_five = (req, res, next) => {
   (req.query.limit = "5"), (req.query.sort = "-rating");
@@ -24,10 +25,7 @@ exports.get_books = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(404).json({
-      status: fail,
-      message: err,
-    });
+    abort(res, 404, "no books available at the moment");
   }
 };
 
@@ -35,6 +33,7 @@ exports.get_book = async (req, res) => {
   try {
     const query = Book.findById(req.params.id);
     const book = await query;
+
     res.status(200).json({
       status: "success",
       data: {
@@ -42,10 +41,7 @@ exports.get_book = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(404).json({
-      success: false,
-      message: err,
-    });
+    abort(res, 404, "this book does not exist");
   }
 };
 
@@ -60,10 +56,7 @@ exports.post_book = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
+    abort(res, 400, "Bad request, please check the sent data");
   }
 };
 
@@ -72,6 +65,7 @@ exports.patch_book = async (req, res) => {
     const book = await Book.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
     });
+
     res.status(200).json({
       status: "success",
       data: {
@@ -79,10 +73,7 @@ exports.patch_book = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: err,
-    });
+    abort(res, 400, "Bad request, please check the sent data and the book id");
   }
 };
 
@@ -94,9 +85,6 @@ exports.delete_book = async (req, res) => {
       data: null,
     });
   } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: err,
-    });
+    abort(res, 404, "this book does not exist, please check the book id");
   }
 };
