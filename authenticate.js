@@ -2,10 +2,27 @@ const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("./models/userModel");
 const { abort } = require("./abort");
+const { json } = require("body-parser");
 
 const generate_token = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
+  });
+};
+//sending jwt as a cookie,along with user data, set secure to true when provide https.
+const send_jwt = (user, code, res) => {
+  const token = generate_token(user._id);
+  res.cookie("jwt", token, {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    //secure: true,
+    httpOnly: true,
+  });
+  user.password = undefined;
+  res.status(code).json({
+    status: "success",
+    data: {
+      user,
+    },
   });
 };
 
@@ -17,16 +34,9 @@ exports.signup = async (req, res, next) => {
       password: req.body.password,
       password_confirm: req.body.password_confirm,
     });
-    const token = generate_token(new_user.id);
-    res.status(201).json({
-      stauts: "success",
-      message: "user created",
-      jwt_token: token,
-      data: {
-        new_user,
-      },
-    });
+    send_jwt(new_user, 201, res);
   } catch (err) {
+    console.log(err);
     abort(res, 400, "please check your sent data");
   }
 };
@@ -41,11 +51,7 @@ exports.login = async (req, res, next) => {
     if (!user || !(await user.check_password(password, user.password))) {
       abort(res, 401, "Unauthorized, wrong email or password");
     }
-    const token = generate_token(user.id);
-    res.status(200).json({
-      status: "success",
-      token: token,
-    });
+    send_jwt(user, 200, res);
   } catch (err) {
     abort(res, 500);
   }

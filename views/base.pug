@@ -1,0 +1,23 @@
+doctype html 
+html 
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0" )
+        title library | #{title}
+        link(rel="stylesheet", href="css/style.css")
+        link(rel="shortcut icon",type='image/png', href="img/page_icon.png")
+        link(rel="stylesheet" , href="https://fonts.googleapis.com/css?family=Megrim|Nunito+Sans:400,900")
+
+body
+block content
+    main.main 
+        .card-container
+            each book in books
+                -var book_page = '/'+book._id;
+                .card
+                    h1 Title: #{book.title}
+                    h2 Category: #{book.category} 
+                    h3 Rating: #{book.rating}
+                    button 
+                        a(href= book_page)  view book
+        

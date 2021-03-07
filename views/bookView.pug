@@ -1,0 +1,17 @@
+extends base
+
+block content
+    
+    
+    main.main 
+            .card-container
+                .card
+                    h1 Title: #{book.title}
+                    h2 Category: #{book.category} 
+                    h2 Rating: #{book.rating}
+                    h2 price: #{book.price} $
+                    h2 description: #{book.description}
+                    button 
+                        a(href= '/')  back
+                
+    

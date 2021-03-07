@@ -1,3 +1,6 @@
+const {
+  default: strictTransportSecurity,
+} = require("helmet/dist/middlewares/strict-transport-security");
 const mongoose = require("mongoose");
 
 bookSchema = new mongoose.Schema({
@@ -22,6 +25,10 @@ bookSchema = new mongoose.Schema({
   price: {
     type: Number,
     required: [true, "books must have a price"],
+  },
+  description: {
+    type: String,
+    required: [true, "book must have a description"],
   },
 });
 
